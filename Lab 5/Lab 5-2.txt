@@ -1,0 +1,117 @@
+package com.homework.lab
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
+import androidx.compose.foundation.layout.size
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            DiceRollerTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    DiceRollerApp()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DiceRollerTheme(
+    content: @Composable () -> Unit
+) {
+    MaterialTheme(
+        colorScheme = lightColorScheme(
+            primary = Color.Blue,
+            onPrimary = Color.White,
+            // Define other colors as needed
+        ),
+        typography = Typography(
+            // Define your typography here
+        ),
+        shapes = Shapes(
+            // Define your shapes here
+        ),
+        content = content
+    )
+}
+
+@Preview
+@Composable
+fun DiceRollerApp() {
+    DiceWithButtonAndImage(modifier = Modifier
+        .fillMaxSize()
+        .wrapContentSize(Alignment.Center)
+    )
+}
+
+@Composable
+fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
+    var result by remember { mutableStateOf(1) }
+
+    // Placeholder dice faces
+    val diceFaceColors = listOf(
+        Color.Gray, // Dice face 1
+        Color.Gray, // Dice face 2
+        Color.Gray, // Dice face 3
+        Color.Gray, // Dice face 4
+        Color.Gray, // Dice face 5
+        Color.Gray // Dice face 6
+    )
+
+    val diceFaceColor: Color = diceFaceColors[result - 1]
+
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        // Simulate dice face using Box with colored background
+        Box(
+            modifier = Modifier
+                .size(100.dp)
+                .graphicsLayer { shadowElevation = 4.dp.toPx() }
+                .background(diceFaceColor),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = result.toString(),
+                color = Color.White,
+                fontSize = 48.sp
+            )
+        }
+
+        Button(
+            onClick = { result = (1..6).random() },
+        ) {
+            Text(text = "Roll Dice", fontSize = 24.sp)
+        }
+    }
+}
