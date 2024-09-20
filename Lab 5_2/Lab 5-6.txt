@@ -1,0 +1,122 @@
+package com.homework.lab
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            ArtSpaceApp()
+        }
+    }
+}
+
+@Composable
+fun ArtSpaceApp() {
+    var currentArtIndex by remember { mutableStateOf(0) }
+    val artworks = listOf(
+        Artwork("Lemon Tree", "Vincent van Gogh", painterResource(id = R.drawable.lemon_tree)),
+        Artwork("Lemon", "Leonardo da Vinci", painterResource(id = R.drawable.lemon_squeeze)),
+        Artwork("Lemonade", "Salvador Dalí", painterResource(id = R.drawable.lemon_drink))
+    )
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        color = Color.White
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            ArtworkCard(artwork = artworks[currentArtIndex])
+            Spacer(modifier = Modifier.height(16.dp))
+            NavigationButtons(
+                onPrevious = {
+                    currentArtIndex = (currentArtIndex - 1 + artworks.size) % artworks.size
+                },
+                onNext = {
+                    currentArtIndex = (currentArtIndex + 1) % artworks.size
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ArtworkCard(artwork: Artwork) {
+    Card(
+        modifier = Modifier.padding(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = artwork.image,
+                contentDescription = artwork.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .background(Color.LightGray)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = artwork.title,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = "By ${artwork.artist}",
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun NavigationButtons(onPrevious: () -> Unit, onNext: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Button(onClick = onPrevious) {
+            Text("Previous")
+        }
+        Button(onClick = onNext) {
+            Text("Next")
+        }
+    }
+}
+
+data class Artwork(val title: String, val artist: String, val image: Painter)
+
+@Composable
+fun ArtSpaceTheme(content: @Composable () -> Unit) {
+    MaterialTheme {
+        content()
+    }
+}
